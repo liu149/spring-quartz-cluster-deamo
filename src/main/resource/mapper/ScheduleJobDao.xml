@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 设置为SchedualJobDao接口方法提供sql语句配置 -->
+<mapper namespace="com.quartz.cluster.dao.ScheduleJobDao">
+    <select id="quaryList" resultType="ScheduleJobVo">
+        SELECT
+          SCHEDULE_JOB_ID AS SCHEDULEJOBID,
+          JOB_NAME AS JOBNAME,
+          ALIAS_NAME AS ALIASNAME,
+          JOB_GROUP AS JOBGROUP,
+          JOB_TRIGGER AS JOBTRIGGER,
+          STATUS,
+          CRON_EXPRESSION AS CRONEXPRESSION,
+          IS_SYNC AS ISSYNC,
+          URL,
+          DESCRIPTION,
+          GMT_CREATE AS GMTCREATE,
+          GMT_MODIFY AS GMTMODIFY
+        FROM SCHEDULE_JOB
+    </select>
+
+    <insert id="insert" parameterType="ScheduleJobVo">
+        INSERT INTO SCHEDULE_JOB(
+        SCHEDULE_JOB_ID,
+        JOB_NAME,
+        ALIAS_NAME,
+        JOB_GROUP,
+        JOB_TRIGGER,
+        JOB_STATUS,
+        JOB_CRONEXPRESSION,
+        ISSYNC,
+        URL,
+        DESCRIPTION,
+        GMT_CREATE,
+        GMT_MODIFY
+        ) VALUES(
+        #{SCHEDULEJOBID},
+        #{JOBNAME},
+        #{ALIASNAME},
+        #{JOBGROUP},
+        #{JOBTRIGGER},
+        #{JOBSTATUS},
+        #{JOBCRONEXPRESSION},
+        #{ISSYNC},
+        #{URL},
+        #{DESCRIPTION},
+        #{GMTCREATE},
+        #{GMTMODIFY}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.quartz.cluster.vo.ScheduleJobVo">
+        UPDATE SCHEDULE_JOB SET
+          JOB_NAME=#{JOBNAME},
+          ALIAS_NAME=#{ALIASNAME},
+          JOB_GROUP=#{JOBGROUP},
+          JOB_TRIGGER=#{JOBTRIGGER},
+          JOB_STATUS=#{JOBSTATUS},
+          JOB_CRONEXPRESSION=#{JOBCRONEXPRESSION},
+          ISSYNC=#{ISSYNC},
+          URL=#{URL},
+          DESCRIPTION=#{DESCRIPTION},
+          GMT_CREATE=#{GMTCREATE},
+          GMT_MODIFY=#{GMTMODIFY}
+        WHERE SCHEDULE_JOB_ID=#{SCHEDULEJOBID}
+    </update>
+</mapper>
