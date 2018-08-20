@@ -1,5 +1,6 @@
 package com.quartz.cluster.vo;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -8,7 +9,7 @@ import java.util.Date;
  * description : 定时任务模型vo
  * version : 1.0
  */
-public class ScheduleJobVo {
+public class ScheduleJobVo implements Serializable {
     /** 任务调度的参数key */
     public static final String JOB_PARAM_KEY    = "jobParam";
     /** 任务id */

@@ -70,10 +70,10 @@ public class ScheduleUtils {
                                          String cronExpression,boolean isSync,Object param){
 
         //同步或异步
-
+        Class<? extends Job> jobClass = isSync ? AsyncJobFactory.class : SyncJobFactory.class;
 
         //构建job信息
-        JobDetail jobDetail = JobBuilder.newJob().withIdentity(jobName,jobGroup).build();
+        JobDetail jobDetail = JobBuilder.newJob(jobClass).withIdentity(jobName,jobGroup).build();
 
         //表达式调度构建器
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression);

@@ -22,31 +22,29 @@
 
     <insert id="insert" parameterType="ScheduleJobVo">
         INSERT INTO SCHEDULE_JOB(
-        SCHEDULE_JOB_ID,
         JOB_NAME,
         ALIAS_NAME,
         JOB_GROUP,
         JOB_TRIGGER,
-        JOB_STATUS,
-        JOB_CRONEXPRESSION,
-        ISSYNC,
+        STATUS,
+        CRON_EXPRESSION,
+        IS_SYNC,
         URL,
         DESCRIPTION,
         GMT_CREATE,
         GMT_MODIFY
         ) VALUES(
-        #{SCHEDULEJOBID},
-        #{JOBNAME},
-        #{ALIASNAME},
-        #{JOBGROUP},
-        #{JOBTRIGGER},
-        #{JOBSTATUS},
-        #{JOBCRONEXPRESSION},
-        #{ISSYNC},
-        #{URL},
-        #{DESCRIPTION},
-        #{GMTCREATE},
-        #{GMTMODIFY}
+        #{jobName},
+        #{aliasName},
+        #{jobGroup},
+        #{jobTrigger},
+        #{status},
+        #{cronExpression},
+        #{isSync},
+        #{url},
+        #{description},
+        #{gmtCreate},
+        #{gmtModify}
         )
     </insert>
 
