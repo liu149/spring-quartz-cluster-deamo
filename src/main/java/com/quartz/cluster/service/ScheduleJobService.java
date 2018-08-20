@@ -65,14 +65,6 @@ public interface ScheduleJobService {
     public void resumeJob(Long scheduleJobId);
 
     /**
-     * 获取任务对象
-     *
-     * @param scheduleJobId
-     * @return
-     */
-    public ScheduleJobVo get(Long scheduleJobId);
-
-    /**
      * 查询任务列表
      *
      * @return
@@ -85,4 +77,11 @@ public interface ScheduleJobService {
      * @return
      */
     public List<ScheduleJobVo> queryExecutingJobList();
+
+    /**
+     *  根据scheduleJobId查找
+     * @param scheduleJobId
+     * @return
+     */
+    public ScheduleJobVo quaryScheduleJobVoById(Long scheduleJobId);
 }

@@ -15,4 +15,10 @@ public interface ScheduleJobDao {
 
     /** 更新定时任务 */
     public void update(ScheduleJobVo scheduleJobVo);
+
+    /** 根据scheduleJobId查询 */
+    public ScheduleJobVo quaryScheduleJobById(Long scheduleJobId);
+
+    /** 根据scheduleJobId删除 */
+    public void deleteScheduleJobVoById(Long scheduleJobId);
 }

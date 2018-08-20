@@ -16,6 +16,8 @@ import java.util.List;
 @Controller
 public class ScheduleJobController {
 
+    private static ObjectMapper mapper = new ObjectMapper();
+
     @Autowired
     private ScheduleJobService scheduleJobService;
 
@@ -23,10 +25,27 @@ public class ScheduleJobController {
     ScheduleJobDao scheduleJobDao;
 
     /**
+     *  任务页面
+     * @return
+     */
+    @RequestMapping(value = "input-schedule-job",method = RequestMethod.GET)
+    public ModelAndView inputScheduleJob(ScheduleJobVo scheduleJobVo) throws JsonProcessingException {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("input-schedule-job");
+
+        ScheduleJobVo vo = new ScheduleJobVo();
+        if(scheduleJobVo.getScheduleJobId() != null){
+            vo = scheduleJobService.quaryScheduleJobVoById(scheduleJobVo.getScheduleJobId());
+        }
+        mv.addObject("scheduleJob",mapper.writeValueAsString(vo));
+        return mv;
+    }
+
+    /**
      *  任务列表页
      * @return
      */
-    @RequestMapping(name = "list-schedule-job",method = RequestMethod.GET)
+    @RequestMapping(value = "list-schedule-job",method = RequestMethod.GET)
     public ModelAndView listScheduleJob(){
         ModelAndView mv = new ModelAndView();
         mv.setViewName("list-schedule-job");
@@ -36,7 +55,7 @@ public class ScheduleJobController {
         // 运行中的任务
         List<ScheduleJobVo> excutingJobList = scheduleJobService.queryExecutingJobList();
 
-        ObjectMapper mapper = new ObjectMapper();
+//        ObjectMapper mapper = new ObjectMapper();
         String scheduleJobJson = "";
         String excutingJobJson = "";
         try {
@@ -52,11 +71,22 @@ public class ScheduleJobController {
     }
 
     /**
+     *  删除任务
+     * @param scheduleJobId
+     * @return
+     */
+    @RequestMapping(value = "delete-schedule-job",method = RequestMethod.GET)
+    public String deleteScheduleJob(Long scheduleJobId){
+        scheduleJobService.delete(scheduleJobId);
+        return "redirect:list-schedule-job";
+    }
+
+    /**
      *  运行一次任务
      * @param scheduleJobId
      * @return
      */
-    @RequestMapping(name = "run-once-schedule-job",method = RequestMethod.GET)
+    @RequestMapping(value = "run-once-schedule-job",method = RequestMethod.GET)
     public String runOnceScheduleJob(Long scheduleJobId){
         scheduleJobService.runOnce(scheduleJobId);
         return "redirect:list-schedule-job";
@@ -66,7 +96,7 @@ public class ScheduleJobController {
      *  暂停任务
      * @return
      */
-    @RequestMapping(name = "pause-schedule-job",method = RequestMethod.GET)
+    @RequestMapping(value = "pause-schedule-job",method = RequestMethod.GET)
     public String pauseScheduleJob(Long scheduleJobId){
         scheduleJobService.pauseJob(scheduleJobId);
         return "redirect:list-schedule-job";
@@ -76,12 +106,29 @@ public class ScheduleJobController {
      *  恢复(un-pause)任务
      * @return
      */
-    @RequestMapping(name = "resumt-schedule-job",method = RequestMethod.GET)
+    @RequestMapping(value = "resumt-schedule-job",method = RequestMethod.GET)
     public String resumeScheduleJob(Long scheduleJobId){
         scheduleJobService.resumeJob(scheduleJobId);
         return "redirect:list-schedule-job";
     }
 
+    /**
+     *  保存任务
+     * @param scheduleJobVo
+     * @return
+     */
+    @RequestMapping(value = "save-schedule-job",method = RequestMethod.POST)
+    public String saveScheduleJob(ScheduleJobVo scheduleJobVo){
+        // 测试随便设置一个状态
+        scheduleJobVo.setStatus("1");
+
+        if(scheduleJobVo.getScheduleJobId() == null){
+            scheduleJobService.insert(scheduleJobVo);
+        }else{
+            scheduleJobService.update(scheduleJobVo);
+        }
+        return "redirect:list-schedule-job";
+    }
 
 
 }

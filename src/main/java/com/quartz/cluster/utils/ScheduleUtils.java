@@ -1,6 +1,8 @@
 package com.quartz.cluster.utils;
 
 import com.quartz.cluster.model.ScheduleJob;
+import com.quartz.cluster.quartz.AsyncJobFactory;
+import com.quartz.cluster.quartz.SyncJobFactory;
 import com.quartz.cluster.vo.ScheduleJobVo;
 import com.quartz.exceptions.ScheduleException;
 import org.quartz.*;
@@ -24,7 +26,7 @@ public class ScheduleUtils {
      * @param jobGroup
      * @return
      */
-    public TriggerKey getTriggerKey(String jobName,String jobGroup){
+    public static TriggerKey getTriggerKey(String jobName,String jobGroup){
         return TriggerKey.triggerKey(jobName,jobGroup);
     }
 
@@ -176,7 +178,35 @@ public class ScheduleUtils {
      */
     public static void updateScheduleJob(Scheduler scheduler,String jobName,String jobGroup,
                                          String cronExpression,boolean isSync,Object param){
+        try {
+            // 同步或异步
+            Class<? extends Job> jobClass = isSync ? AsyncJobFactory.class : SyncJobFactory.class;
 
+            JobDetail jobDetail = scheduler.getJobDetail(JobKey.jobKey(jobName,jobGroup));
+            jobDetail = jobDetail.getJobBuilder().ofType(jobClass).build();
+
+            // 更新参数
+            JobDataMap jobDataMap = jobDetail.getJobDataMap();
+            jobDataMap.put(ScheduleJobVo.JOB_PARAM_KEY,param);
+            jobDetail.getJobBuilder().usingJobData(jobDataMap);
+
+            TriggerKey triggerKey = ScheduleUtils.getTriggerKey(jobName,jobGroup);
+
+            // 表达式调度构建器
+            CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression);
+            CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
+
+            //按新的cronExpression重新构建trigger
+            trigger = trigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(cronScheduleBuilder).build();
+            Trigger.TriggerState triggerState = scheduler.getTriggerState(triggerKey);
+
+            // 排除暂停状态的，其他的按新的trigger重新设置job执行
+            if(!triggerState.name().equalsIgnoreCase("PAUSE")){
+                scheduler.rescheduleJob(triggerKey,trigger);
+            }
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -194,6 +224,5 @@ public class ScheduleUtils {
             throw new ScheduleException("删除定时任务失败");
         }
     }
-
 
 }

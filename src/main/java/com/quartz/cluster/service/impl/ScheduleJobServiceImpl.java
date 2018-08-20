@@ -65,9 +65,17 @@ public class ScheduleJobServiceImpl implements ScheduleJobService {
 
     }
 
+    /**
+     *  删除任务
+     * @param scheduleJobId
+     */
     @Override
     public void delete(Long scheduleJobId) {
-
+        ScheduleJobVo scheduleJobVo = scheduleJobDao.quaryScheduleJobById(scheduleJobId);
+        // 删除运行的任务
+        ScheduleUtils.deleteScheduleJob(scheduler,scheduleJobVo.getJobName(),scheduleJobVo.getJobGroup());
+        // 删除运行的数据
+        scheduleJobDao.deleteScheduleJobVoById(scheduleJobId);
     }
 
     @Override
@@ -83,11 +91,6 @@ public class ScheduleJobServiceImpl implements ScheduleJobService {
     @Override
     public void resumeJob(Long scheduleJobId) {
 
-    }
-
-    @Override
-    public ScheduleJobVo get(Long scheduleJobId) {
-        return null;
     }
 
     @Override
@@ -155,5 +158,15 @@ public class ScheduleJobServiceImpl implements ScheduleJobService {
             // 暂不做处理
             return null;
         }
+    }
+
+    /**
+     *  根据
+     * @param scheduleJobId
+     * @return
+     */
+    @Override
+    public ScheduleJobVo quaryScheduleJobVoById(Long scheduleJobId){
+        return scheduleJobDao.quaryScheduleJobById(scheduleJobId);
     }
 }
